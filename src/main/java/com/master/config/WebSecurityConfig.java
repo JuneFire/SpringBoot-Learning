@@ -77,7 +77,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .and().logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                     .logoutSuccessUrl("/")
                     .permitAll()
-                    .and().addFilterBefore(githubFilter(), BasicAuthenticationFilter.class);
+                    .and().addFilterBefore(githubFilter(), BasicAuthenticationFilter.class).csrf().disable();
     }
 
     private Filter githubFilter() {

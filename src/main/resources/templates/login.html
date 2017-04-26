@@ -6,7 +6,7 @@
 <div class="container login">
     <div>
         <form action="/login.do" method="post">
-            <input type="hidden" th:value="${_csrf.token}" name="_csrf"/>
+          <input type="hidden" th:value="${_csrf.token}" name="_csrf"/>
             <div class="form-group">
                 <label for="usernameInput">Username</label>
                 <input type="text" id="usernameInput" class="form-control" name="username" placeholder="enter your username"/>
