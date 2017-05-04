@@ -14,6 +14,7 @@ public interface ICommonService<T> {
     void delete(T entity) throws Exception;
     T findById(Long id);
     T findBySample(T sample);
+ //   T findBySamples(String username,String password);
     List<T> findAll();
     List<T> findAll(T sample);
     Page<T> findAll(PageRequest pageRequest);

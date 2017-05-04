@@ -14,8 +14,5 @@ public class PublicController {
 
         return "index";
     }
-    @RequestMapping("/user/info")
-    public String info(){
-        return "user/info";
-    }
+
 }

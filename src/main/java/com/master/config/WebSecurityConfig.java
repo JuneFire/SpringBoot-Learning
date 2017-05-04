@@ -14,6 +14,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.oauth2.client.OAuth2ClientContext;
@@ -46,10 +47,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private UserService userService;
 
     @Override
+    public void configure(WebSecurity web) throws Exception {
+        super.configure(web);
+    }
+
+    @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception{
         // Configure spring security's authenticationManager with custom
         // user details service
-        auth.userDetailsService(this.userService);
+        auth.userDetailsService(userService);  //配置自定义userDetailService
     }
     @Override
     @Bean // share AuthenticationManager for web and oauth
@@ -65,19 +71,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception{
             http
                     .authorizeRequests()
-                    .antMatchers("/user/**").authenticated()
+                    .antMatchers("/user/**").authenticated()   //访问user下的页面需要权限
                     .anyRequest().permitAll()
                     .and().exceptionHandling()
                     .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login"))
                     //.hasAnyRole("ADMIN","USER")
                     .and()
-                    .formLogin().loginPage("/login").loginProcessingUrl("/login.do").defaultSuccessUrl("/user/info")
+                    .formLogin().loginPage("/login")
+                    .loginProcessingUrl("/login.do").defaultSuccessUrl("/user/info")   //登陆成功
                     .failureUrl("/login?err=1")
                     .permitAll()
-                    .and().logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                    .and()
+                    .logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                     .logoutSuccessUrl("/")
                     .permitAll()
-                    .and().addFilterBefore(githubFilter(), BasicAuthenticationFilter.class).csrf().disable();
+                    .and().addFilterBefore(githubFilter(), BasicAuthenticationFilter.class);
     }
 
     private Filter githubFilter() {
@@ -131,22 +139,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         }
     }
 
-    // client resource
-    public class ClientResources {
 
-        @NestedConfigurationProperty
-        private AuthorizationCodeResourceDetails client = new AuthorizationCodeResourceDetails();
-
-        @NestedConfigurationProperty
-        private ResourceServerProperties resource = new ResourceServerProperties();
-
-        public AuthorizationCodeResourceDetails getClient() {
-            return client;
-        }
-
-        public ResourceServerProperties getResource() {
-            return resource;
-        }
-    }
 }
 
